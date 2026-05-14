@@ -76,10 +76,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Phân hệ quản trị Melodise: quản lý tài khoản, nhạc số, đơn hàng và báo cáo doanh thu." },
       { name: "author", content: "Melodise" },
       { property: "og:title", content: "Melodise Admin — Quản lý nhạc số" },
-      { property: "og:description", content: "Phân hệ quản trị nền tảng kinh doanh nhạc số." },
+      { property: "og:description", content: "Phân hệ quản trị Melodise: quản lý tài khoản, nhạc số, đơn hàng và báo cáo doanh thu." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Melodise Admin — Quản lý nhạc số" },
+      { name: "twitter:description", content: "Phân hệ quản trị Melodise: quản lý tài khoản, nhạc số, đơn hàng và báo cáo doanh thu." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e205a651-2617-47b8-acb5-354b9d526f6e/id-preview-6bdb2dee--b93b8c83-aad0-4c45-93d8-0bcf3468b027.lovable.app-1778775193384.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e205a651-2617-47b8-acb5-354b9d526f6e/id-preview-6bdb2dee--b93b8c83-aad0-4c45-93d8-0bcf3468b027.lovable.app-1778775193384.png" },
     ],
     links: [
       {
