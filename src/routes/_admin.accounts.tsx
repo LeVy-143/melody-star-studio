@@ -10,7 +10,7 @@ const accounts = [
   { id: "AD001", name: "Nguyễn Cẩm Trân", email: "tran@melodise.vn", role: "Quản trị viên", status: "Hoạt động" },
   { id: "EM002", name: "Trần Lưu Tuyết Trân", email: "tuyet@melodise.vn", role: "Nhân viên", status: "Hoạt động" },
   { id: "EM003", name: "Lê Ngọc Tường Vy", email: "vy@melodise.vn", role: "Nhân viên", status: "Hoạt động" },
-  { id: "US104", name: "vananh@gmail.com", email: "vananh@gmail.com", role: "Khách hàng", status: "Hoạt động" },
+  { id: "US104", name: "Nguyễn Thị Vân Anh", email: "vananh@gmail.com", role: "Khách hàng", status: "Hoạt động" },
   { id: "US105", name: "Hà My", email: "hamy@gmail.com", role: "Khách hàng", status: "Khóa" },
 ];
 
