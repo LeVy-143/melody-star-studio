@@ -133,7 +133,7 @@ function ExportModal({ onClose }: { onClose: () => void }) {
     if (type === "revenue") {
       const totalRevenue = monthly.reduce((s, m) => s + m.revenue * 1_000_000, 0);
       const totalOrders = 142;
-      if (totalOrders === 0) {
+      if (monthly.length === 0) {
         toast.message("Không có dữ liệu trong khoảng thời gian này");
       }
       csv =
