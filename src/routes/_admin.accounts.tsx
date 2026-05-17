@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { Modal } from "@/components/Modal";
-import { Plus, Search, Edit2, Trash2, Shield, User, Save } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, Shield, User, Save, Loader2 } from "lucide-react";
+import { melodiseDb } from "@/lib/external-supabase";
 
 export const Route = createFileRoute("/_admin/accounts")({
   component: AccountsPage,
