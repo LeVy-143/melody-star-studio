@@ -6,7 +6,11 @@ const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1dGF2bnltaXZ4YnphanVwd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3NjU5NjQsImV4cCI6MjA5NDM0MTk2NH0.WLfn15KJDOh0A5QnjHZ9O7xAeAlKIiqy3auFW-6sLTM";
 
 export const melodiseDb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: { persistSession: false, autoRefreshToken: false },
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    storageKey: "melodise-admin-auth",
+  },
 });
 
 export type DbTrack = {

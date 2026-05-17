@@ -45,7 +45,7 @@ function AccountsPage() {
       if (error || !data) {
         setAccounts(fallback);
         setNotice(
-          "Bảng users đang bật RLS nên anon key chưa đọc được. Hệ thống đang hiển thị dữ liệu mẫu — hãy cấp policy SELECT cho anon hoặc thêm đăng nhập để xem dữ liệu thật.",
+          "Phiên đăng nhập hiện tại chưa có quyền SELECT trên bảng users (RLS chặn). Hệ thống đang hiển thị dữ liệu mẫu — hãy đăng nhập bằng tài khoản admin hoặc bổ sung policy phù hợp.",
         );
         setLoading(false);
         return;

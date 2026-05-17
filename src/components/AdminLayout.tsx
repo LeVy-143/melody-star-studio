@@ -1,4 +1,5 @@
-import { Link, Outlet, useLocation } from "@tanstack/react-router";
+import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { melodiseDb } from "@/lib/external-supabase";
 import {
   LayoutDashboard,
   Users,
@@ -20,6 +21,11 @@ const nav = [
 
 export function AdminLayout() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const signOut = async () => {
+    await melodiseDb.auth.signOut();
+    navigate({ to: "/login" });
+  };
 
   return (
     <div className="relative min-h-screen">
@@ -65,13 +71,13 @@ export function AdminLayout() {
           </nav>
 
           <div className="border-t border-sidebar-border p-3">
-            <Link
-              to="/login"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition hover:bg-destructive/15 hover:text-destructive-foreground"
+            <button
+              onClick={signOut}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition hover:bg-destructive/15 hover:text-destructive-foreground"
             >
               <LogOut className="h-4 w-4" />
               Đăng xuất
-            </Link>
+            </button>
           </div>
         </aside>
 
