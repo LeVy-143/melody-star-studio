@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Sparkles, Mail, Lock } from "lucide-react";
+import { Sparkles, Mail, Lock, Loader2 } from "lucide-react";
 import { StarField } from "@/components/StarField";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { melodiseDb } from "@/lib/external-supabase";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -9,11 +11,36 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("admin@melodise.vn");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = (e: FormEvent) => {
+  // Nếu đã đăng nhập rồi thì chuyển thẳng vào admin
+  useEffect(() => {
+    melodiseDb.auth.getSession().then(({ data }) => {
+      if (data.session) navigate({ to: "/" });
+    });
+  }, [navigate]);
+
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setError(null);
+    if (!email.trim() || !password) {
+      setError("Vui lòng nhập email và mật khẩu");
+      return;
+    }
+    setLoading(true);
+    const { error: err } = await melodiseDb.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+    setLoading(false);
+    if (err) {
+      setError(err.message || "Đăng nhập thất bại");
+      return;
+    }
+    toast.success("Đăng nhập thành công");
     navigate({ to: "/" });
   };
 
@@ -46,6 +73,7 @@ function LoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@melodise.vn"
                   className="w-full rounded-lg border border-border bg-input/40 py-2.5 pl-10 pr-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
@@ -67,16 +95,24 @@ function LoginPage() {
               </div>
             </div>
 
+            {error && (
+              <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive-foreground">
+                {error}
+              </div>
+            )}
+
             <button
               type="submit"
-              className="mt-2 w-full rounded-lg bg-gradient-to-r from-gold via-amber-200 to-gold bg-[length:200%_100%] py-2.5 text-sm font-bold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:bg-[position:100%_0]"
+              disabled={loading}
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-gold via-amber-200 to-gold bg-[length:200%_100%] py-2.5 text-sm font-bold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:bg-[position:100%_0] disabled:opacity-60"
             >
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               Đăng nhập
             </button>
           </form>
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
-            Demo: bấm Đăng nhập để vào Admin Panel ✨
+            Sử dụng tài khoản quản trị Melodise (Supabase Auth) để xem dữ liệu thật ✨
           </p>
         </div>
       </div>
