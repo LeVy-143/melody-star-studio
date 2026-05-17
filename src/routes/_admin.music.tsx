@@ -25,22 +25,6 @@ type Track = {
 };
 type Category = { id: string; name: string; description: string };
 
-const initialTracks: Track[] = [
-  { id: "T001", title: "Sao Sáng", artist: "Lan Anh", category: "Pop", duration: "03:24", price: 25000, preview: "sao-sang-preview.mp3", original: "sao-sang.wav", status: "Đang bán" },
-  { id: "T002", title: "Đêm Nhung", artist: "Velvet Crew", category: "R&B", duration: "04:01", price: 20000, preview: "dem-nhung-preview.mp3", original: "dem-nhung.mp3", status: "Đang bán" },
-  { id: "T003", title: "Giai Điệu Vàng", artist: "Minh Khôi", category: "Acoustic", duration: "02:58", price: 30000, preview: "gdv-preview.mp3", original: "gdv.wav", status: "Đang bán" },
-  { id: "T004", title: "Bầu Trời Xanh", artist: "Hà My", category: "Indie", duration: "03:12", price: 18000, preview: "btx-preview.mp3", original: "btx.mp3", status: "Bản nháp" },
-  { id: "T005", title: "Vũ Trụ Của Em", artist: "Starlight", category: "Pop", duration: "03:45", price: 22000, preview: "vtce-preview.mp3", original: "vtce.wav", status: "Đang bán" },
-  { id: "T006", title: "Lời Thì Thầm", artist: "Lan Anh", category: "Ballad", duration: "04:20", price: 28000, preview: "ltt-preview.mp3", original: "ltt.mp3", status: "Ngừng bán" },
-];
-
-const initialCategories: Category[] = [
-  { id: "C01", name: "Pop", description: "Nhạc Pop hiện đại" },
-  { id: "C02", name: "R&B", description: "Rhythm & Blues" },
-  { id: "C03", name: "Acoustic", description: "Mộc mạc, guitar gỗ" },
-  { id: "C04", name: "Indie", description: "Độc lập" },
-  { id: "C05", name: "Ballad", description: "Trữ tình" },
-];
 
 const fmt = (n: number) => n.toLocaleString("vi-VN") + "₫";
 
