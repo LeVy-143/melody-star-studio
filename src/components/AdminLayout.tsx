@@ -21,6 +21,11 @@ const nav = [
 
 export function AdminLayout() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const signOut = async () => {
+    await melodiseDb.auth.signOut();
+    navigate({ to: "/login" });
+  };
 
   return (
     <div className="relative min-h-screen">
