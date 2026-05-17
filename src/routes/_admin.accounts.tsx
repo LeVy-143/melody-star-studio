@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { Modal } from "@/components/Modal";
-import { Plus, Search, Edit2, Trash2, Shield, User, Save } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, Shield, User, Save, Loader2 } from "lucide-react";
+import { melodiseDb } from "@/lib/external-supabase";
 
 export const Route = createFileRoute("/_admin/accounts")({
   component: AccountsPage,
@@ -19,21 +20,58 @@ type Account = {
   status: Status;
 };
 
-const initial: Account[] = [
+const fallback: Account[] = [
   { id: "AD001", name: "Nguyễn Cẩm Trân", email: "tran@melodise.vn", role: "Quản trị viên", status: "Hoạt động" },
   { id: "EM002", name: "Trần Lưu Tuyết Trân", email: "tuyet@melodise.vn", role: "Nhân viên", status: "Hoạt động" },
   { id: "EM003", name: "Lê Ngọc Tường Vy", email: "vy@melodise.vn", role: "Nhân viên", status: "Hoạt động" },
-  { id: "US104", name: "Nguyễn Thị Vân Anh", email: "vananh@gmail.com", role: "Khách hàng", status: "Hoạt động" },
-  { id: "US105", name: "Hà My", email: "hamy@gmail.com", role: "Khách hàng", status: "Khóa" },
 ];
 
 function AccountsPage() {
-  const [accounts, setAccounts] = useState<Account[]>(initial);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState<string | null>(null);
   const [keyword, setKeyword] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | Role>("all");
   const [editing, setEditing] = useState<Account | null>(null);
   const [creating, setCreating] = useState(false);
   const [deleting, setDeleting] = useState<Account | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const { data, error } = await melodiseDb
+        .from("users")
+        .select("user_id, full_name, email, role, status, created_at");
+      if (error || !data) {
+        setAccounts(fallback);
+        setNotice(
+          "Bảng users đang bật RLS nên anon key chưa đọc được. Hệ thống đang hiển thị dữ liệu mẫu — hãy cấp policy SELECT cho anon hoặc thêm đăng nhập để xem dữ liệu thật.",
+        );
+        setLoading(false);
+        return;
+      }
+      const mapped: Account[] = data.map((u: {
+        user_id: number | string; full_name: string | null; email: string | null;
+        role: string | null; status: string | null;
+      }) => {
+        const r = (u.role ?? "").toLowerCase();
+        const role: Role =
+          r.includes("admin") ? "Quản trị viên" :
+          r.includes("staff") || r.includes("emp") || r.includes("nhân") ? "Nhân viên" :
+          "Khách hàng";
+        const status: Status = (u.status ?? "").toLowerCase().includes("lock") || (u.status ?? "").includes("Khóa") ? "Khóa" : "Hoạt động";
+        return {
+          id: String(u.user_id),
+          name: u.full_name ?? "(chưa cập nhật)",
+          email: u.email ?? "",
+          role,
+          status,
+        };
+      });
+      setAccounts(mapped);
+      setLoading(false);
+    })();
+  }, []);
 
   const filtered = useMemo(() => {
     const k = keyword.trim().toLowerCase();
@@ -81,6 +119,18 @@ function AccountsPage() {
           </button>
         }
       />
+
+      {notice && (
+        <div className="mb-4 rounded-xl border border-amber-400/30 bg-amber-400/10 p-3 text-xs text-amber-200">
+          {notice}
+        </div>
+      )}
+
+      {loading && (
+        <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" /> Đang tải dữ liệu từ Lovable Cloud...
+        </div>
+      )}
 
       <div className="glass-card rounded-2xl p-4">
         <div className="mb-4 flex flex-wrap items-center gap-3">

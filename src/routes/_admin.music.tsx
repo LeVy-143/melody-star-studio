@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { Modal } from "@/components/Modal";
-import { Plus, Music2, Edit2, Trash2, Disc3, Search, Save, FolderOpen } from "lucide-react";
+import { Plus, Music2, Edit2, Trash2, Disc3, Search, Save, FolderOpen, Loader2 } from "lucide-react";
+import { melodiseDb } from "@/lib/external-supabase";
 
 export const Route = createFileRoute("/_admin/music")({
   component: MusicPage,
@@ -24,29 +25,76 @@ type Track = {
 };
 type Category = { id: string; name: string; description: string };
 
-const initialTracks: Track[] = [
-  { id: "T001", title: "Sao Sáng", artist: "Lan Anh", category: "Pop", duration: "03:24", price: 25000, preview: "sao-sang-preview.mp3", original: "sao-sang.wav", status: "Đang bán" },
-  { id: "T002", title: "Đêm Nhung", artist: "Velvet Crew", category: "R&B", duration: "04:01", price: 20000, preview: "dem-nhung-preview.mp3", original: "dem-nhung.mp3", status: "Đang bán" },
-  { id: "T003", title: "Giai Điệu Vàng", artist: "Minh Khôi", category: "Acoustic", duration: "02:58", price: 30000, preview: "gdv-preview.mp3", original: "gdv.wav", status: "Đang bán" },
-  { id: "T004", title: "Bầu Trời Xanh", artist: "Hà My", category: "Indie", duration: "03:12", price: 18000, preview: "btx-preview.mp3", original: "btx.mp3", status: "Bản nháp" },
-  { id: "T005", title: "Vũ Trụ Của Em", artist: "Starlight", category: "Pop", duration: "03:45", price: 22000, preview: "vtce-preview.mp3", original: "vtce.wav", status: "Đang bán" },
-  { id: "T006", title: "Lời Thì Thầm", artist: "Lan Anh", category: "Ballad", duration: "04:20", price: 28000, preview: "ltt-preview.mp3", original: "ltt.mp3", status: "Ngừng bán" },
-];
-
-const initialCategories: Category[] = [
-  { id: "C01", name: "Pop", description: "Nhạc Pop hiện đại" },
-  { id: "C02", name: "R&B", description: "Rhythm & Blues" },
-  { id: "C03", name: "Acoustic", description: "Mộc mạc, guitar gỗ" },
-  { id: "C04", name: "Indie", description: "Độc lập" },
-  { id: "C05", name: "Ballad", description: "Trữ tình" },
-];
 
 const fmt = (n: number) => n.toLocaleString("vi-VN") + "₫";
 
 function MusicPage() {
   const [tab, setTab] = useState<"tracks" | "categories">("tracks");
-  const [tracks, setTracks] = useState<Track[]>(initialTracks);
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const [tRes, aRes, cRes, tcRes] = await Promise.all([
+        melodiseDb.from("tracks").select("*").order("track_id"),
+        melodiseDb.from("artists").select("*"),
+        melodiseDb.from("categories").select("*").order("category_id"),
+        melodiseDb.from("track_categories").select("*"),
+      ]);
+      if (tRes.error || aRes.error || cRes.error || tcRes.error) {
+        toast.error("Không tải được dữ liệu từ Lovable Cloud");
+        setLoading(false);
+        return;
+      }
+      const artistMap = new Map<number, string>(
+        (aRes.data ?? []).map((a: { artist_id: number; name: string }) => [a.artist_id, a.name]),
+      );
+      const catMap = new Map<number, string>(
+        (cRes.data ?? []).map((c: { category_id: number; category: string }) => [c.category_id, c.category]),
+      );
+      const trackCatMap = new Map<number, string>();
+      (tcRes.data ?? []).forEach((tc: { track_id: number; category_id: number }) => {
+        if (!trackCatMap.has(tc.track_id))
+          trackCatMap.set(tc.track_id, catMap.get(tc.category_id) ?? "");
+      });
+      setCategories(
+        (cRes.data ?? []).map((c: { category_id: number; category: string; description: string | null }) => ({
+          id: `C${String(c.category_id).padStart(2, "0")}`,
+          name: c.category,
+          description: c.description ?? "",
+        })),
+      );
+      setTracks(
+        (tRes.data ?? []).map((t: {
+          track_id: number; title: string; duration: string; price: number;
+          demo_audio_url: string | null; original_audio_url: string | null;
+          cover_image_url: string | null; artist_id: number | null;
+        }) => ({
+          id: `T${String(t.track_id).padStart(3, "0")}`,
+          title: t.title,
+          artist: t.artist_id ? artistMap.get(t.artist_id) ?? "—" : "—",
+          category: trackCatMap.get(t.track_id) ?? "",
+          duration: t.duration,
+          price: t.price,
+          preview: t.demo_audio_url?.split("/").pop() ?? "",
+          original: t.original_audio_url?.split("/").pop() ?? "",
+          cover: t.cover_image_url ?? undefined,
+          status: "Đang bán" as TrackStatus,
+        })),
+      );
+      setLoading(false);
+    })();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20 text-muted-foreground">
+        <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Đang tải dữ liệu...
+      </div>
+    );
+  }
 
   return (
     <>
