@@ -120,6 +120,18 @@ function AccountsPage() {
         }
       />
 
+      {notice && (
+        <div className="mb-4 rounded-xl border border-amber-400/30 bg-amber-400/10 p-3 text-xs text-amber-200">
+          {notice}
+        </div>
+      )}
+
+      {loading && (
+        <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" /> Đang tải dữ liệu từ Lovable Cloud...
+        </div>
+      )}
+
       <div className="glass-card rounded-2xl p-4">
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <div className="relative min-w-[240px] flex-1">
