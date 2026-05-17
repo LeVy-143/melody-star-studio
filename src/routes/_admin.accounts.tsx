@@ -45,7 +45,7 @@ function AccountsPage() {
       if (error || !data) {
         setAccounts(fallback);
         setNotice(
-          "Phiên đăng nhập hiện tại chưa có quyền SELECT trên bảng users (RLS chặn). Hệ thống đang hiển thị dữ liệu mẫu — hãy đăng nhập bằng tài khoản admin hoặc bổ sung policy phù hợp.",
+          `Không đọc được bảng users: ${error?.message ?? "RLS từ chối"}. Hãy đăng xuất rồi đăng nhập lại bằng tài khoản Supabase Auth hợp lệ (chỉ authenticated mới được xem).`,
         );
         setLoading(false);
         return;
