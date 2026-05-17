@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { Modal } from "@/components/Modal";
-import { Plus, Music2, Edit2, Trash2, Disc3, Search, Save, FolderOpen } from "lucide-react";
+import { Plus, Music2, Edit2, Trash2, Disc3, Search, Save, FolderOpen, Loader2 } from "lucide-react";
+import { melodiseDb } from "@/lib/external-supabase";
 
 export const Route = createFileRoute("/_admin/music")({
   component: MusicPage,
