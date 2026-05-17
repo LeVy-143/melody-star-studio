@@ -1,4 +1,5 @@
-import { Link, Outlet, useLocation } from "@tanstack/react-router";
+import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { melodiseDb } from "@/lib/external-supabase";
 import {
   LayoutDashboard,
   Users,
