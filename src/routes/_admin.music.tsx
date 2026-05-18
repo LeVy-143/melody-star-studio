@@ -206,12 +206,14 @@ function TracksTab({
             className="w-full rounded-lg border border-border bg-input/40 py-2 pl-10 pr-3 text-sm placeholder:text-muted-foreground focus:border-gold focus:outline-none"
           />
         </div>
-        <button
-          onClick={() => setCreating(true)}
-          className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-gold to-amber-300 px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:scale-[1.02]"
-        >
-          <Plus className="h-4 w-4" /> Thêm mới
-        </button>
+        {canEditMusic(getCurrentUser()) && (
+          <button
+            onClick={() => setCreating(true)}
+            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-gold to-amber-300 px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:scale-[1.02]"
+          >
+            <Plus className="h-4 w-4" /> Thêm mới
+          </button>
+        )}
       </div>
 
       {filtered.length === 0 ? (
@@ -255,22 +257,24 @@ function TracksTab({
                     {t.status}
                   </div>
                 </div>
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => setEditing(t)}
-                    className="rounded-md p-2 text-muted-foreground transition hover:bg-gold/15 hover:text-gold"
-                    title="Sửa"
-                  >
-                    <Edit2 className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setDeleting(t)}
-                    className="rounded-md p-2 text-muted-foreground transition hover:bg-destructive/20 hover:text-destructive-foreground"
-                    title="Xóa"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
+                {canEditMusic(getCurrentUser()) && (
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => setEditing(t)}
+                      className="rounded-md p-2 text-muted-foreground transition hover:bg-gold/15 hover:text-gold"
+                      title="Sửa"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => setDeleting(t)}
+                      className="rounded-md p-2 text-muted-foreground transition hover:bg-destructive/20 hover:text-destructive-foreground"
+                      title="Xóa"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}
