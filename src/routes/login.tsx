@@ -24,9 +24,7 @@ function LoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    // Giả lập độ trễ kiểm tra
-    await new Promise((r) => setTimeout(r, 300));
-    const res = signIn(email, password);
+    const res = await signIn(email, password);
     setLoading(false);
     if (!res.ok) {
       setError(res.error);
@@ -101,11 +99,9 @@ function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 space-y-1 rounded-lg border border-border bg-muted/20 p-3 text-[11px] text-muted-foreground">
-            <div className="font-semibold text-gold">Tài khoản mẫu:</div>
-            <div>👑 admin@melodise.vn / admin123 (Quản trị viên — toàn quyền)</div>
-            <div>👤 staff@melodise.vn / staff123 (Nhân viên — không xem Tài khoản & Báo cáo)</div>
-          </div>
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            Sử dụng tài khoản nhân viên đã được cấp trong hệ thống Melodise ✨
+          </p>
         </div>
       </div>
     </div>
