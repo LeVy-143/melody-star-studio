@@ -5,10 +5,17 @@ import { PageHeader } from "@/components/PageHeader";
 import { Modal } from "@/components/Modal";
 import { Plus, Music2, Edit2, Trash2, Disc3, Search, Save, FolderOpen, Loader2 } from "lucide-react";
 import { melodiseDb } from "@/lib/external-supabase";
+import { getCurrentUser, hasPermission, canEditMusic } from "@/lib/auth";
+import { NoPermission } from "@/components/NoPermission";
 
 export const Route = createFileRoute("/_admin/music")({
-  component: MusicPage,
+  component: MusicGuard,
 });
+
+function MusicGuard() {
+  if (!hasPermission(getCurrentUser(), "music")) return <NoPermission tab="Quản lý nhạc số" />;
+  return <MusicPage />;
+}
 
 type TrackStatus = "Đang bán" | "Bản nháp" | "Ngừng bán";
 type Track = {
