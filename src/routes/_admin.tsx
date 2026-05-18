@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
-import { melodiseDb } from "@/lib/external-supabase";
+import { getCurrentUser } from "@/lib/auth";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_admin")({
@@ -13,22 +13,12 @@ function AdminGate() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    melodiseDb.auth.getSession().then(({ data }) => {
-      if (cancelled) return;
-      if (!data.session) {
-        navigate({ to: "/login" });
-      } else {
-        setReady(true);
-      }
-    });
-    const { data: sub } = melodiseDb.auth.onAuthStateChange((_e, session) => {
-      if (!session) navigate({ to: "/login" });
-    });
-    return () => {
-      cancelled = true;
-      sub.subscription.unsubscribe();
-    };
+    const user = getCurrentUser();
+    if (!user) {
+      navigate({ to: "/login" });
+    } else {
+      setReady(true);
+    }
   }, [navigate]);
 
   if (!ready) {
