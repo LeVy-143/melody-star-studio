@@ -4,10 +4,17 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { Modal } from "@/components/Modal";
 import { Download, TrendingUp, Music2, FileSpreadsheet } from "lucide-react";
+import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { NoPermission } from "@/components/NoPermission";
 
 export const Route = createFileRoute("/_admin/reports")({
-  component: ReportsPage,
+  component: ReportsGuard,
 });
+
+function ReportsGuard() {
+  if (!hasPermission(getCurrentUser(), "reports")) return <NoPermission tab="Báo cáo doanh thu" />;
+  return <ReportsPage />;
+}
 
 const monthly = [
   { month: "T1", revenue: 42 },

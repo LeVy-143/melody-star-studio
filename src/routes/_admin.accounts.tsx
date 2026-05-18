@@ -5,10 +5,17 @@ import { PageHeader } from "@/components/PageHeader";
 import { Modal } from "@/components/Modal";
 import { Plus, Search, Edit2, Trash2, Shield, User, Save, Loader2 } from "lucide-react";
 import { melodiseDb } from "@/lib/external-supabase";
+import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { NoPermission } from "@/components/NoPermission";
 
 export const Route = createFileRoute("/_admin/accounts")({
-  component: AccountsPage,
+  component: AccountsGuard,
 });
+
+function AccountsGuard() {
+  if (!hasPermission(getCurrentUser(), "accounts")) return <NoPermission tab="Quản lý tài khoản" />;
+  return <AccountsPage />;
+}
 
 type Role = "Quản trị viên" | "Nhân viên" | "Khách hàng";
 type Status = "Hoạt động" | "Khóa";

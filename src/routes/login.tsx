@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Sparkles, Mail, Lock, Loader2 } from "lucide-react";
 import { StarField } from "@/components/StarField";
 import { useEffect, useState, type FormEvent } from "react";
-import { melodiseDb } from "@/lib/external-supabase";
+import { signIn, getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
@@ -16,31 +16,23 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Nếu đã đăng nhập rồi thì chuyển thẳng vào admin
   useEffect(() => {
-    melodiseDb.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/" });
-    });
+    if (getCurrentUser()) navigate({ to: "/" });
   }, [navigate]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!email.trim() || !password) {
-      setError("Vui lòng nhập email và mật khẩu");
-      return;
-    }
     setLoading(true);
-    const { error: err } = await melodiseDb.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
+    // Giả lập độ trễ kiểm tra
+    await new Promise((r) => setTimeout(r, 300));
+    const res = signIn(email, password);
     setLoading(false);
-    if (err) {
-      setError(err.message || "Đăng nhập thất bại");
+    if (!res.ok) {
+      setError(res.error);
       return;
     }
-    toast.success("Đăng nhập thành công");
+    toast.success(`Xin chào ${res.user.name}`);
     navigate({ to: "/" });
   };
 
@@ -54,9 +46,7 @@ function LoginPage() {
             <div className="mb-3 rounded-full bg-gold/15 p-3 ring-2 ring-gold/40 shadow-[0_0_30px_oklch(0.85_0.16_88/0.4)]">
               <Sparkles className="h-7 w-7 text-gold" />
             </div>
-            <h1 className="text-gold-shimmer text-3xl font-bold tracking-wide">
-              Melodise
-            </h1>
+            <h1 className="text-gold-shimmer text-3xl font-bold tracking-wide">Melodise</h1>
             <p className="mt-1 text-xs uppercase tracking-[0.3em] text-muted-foreground">
               Admin Panel
             </p>
@@ -111,9 +101,11 @@ function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            Sử dụng tài khoản quản trị Melodise (Supabase Auth) để xem dữ liệu thật ✨
-          </p>
+          <div className="mt-6 space-y-1 rounded-lg border border-border bg-muted/20 p-3 text-[11px] text-muted-foreground">
+            <div className="font-semibold text-gold">Tài khoản mẫu:</div>
+            <div>👑 admin@melodise.vn / admin123 (Quản trị viên — toàn quyền)</div>
+            <div>👤 staff@melodise.vn / staff123 (Nhân viên — không xem Tài khoản & Báo cáo)</div>
+          </div>
         </div>
       </div>
     </div>
