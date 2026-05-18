@@ -4,10 +4,17 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { Modal } from "@/components/Modal";
 import { Eye, Music2, FileText, Save, Search, ListChecks, Inbox } from "lucide-react";
+import { getCurrentUser, hasPermission } from "@/lib/auth";
+import { NoPermission } from "@/components/NoPermission";
 
 export const Route = createFileRoute("/_admin/orders")({
-  component: OrdersPage,
+  component: OrdersGuard,
 });
+
+function OrdersGuard() {
+  if (!hasPermission(getCurrentUser(), "orders")) return <NoPermission tab="Quản lý đơn hàng" />;
+  return <OrdersPage />;
+}
 
 type OrderStatus = "Chờ duyệt" | "Đã phê duyệt" | "Hủy đơn";
 type OrderItem = { title: string; artist: string; price: number };
