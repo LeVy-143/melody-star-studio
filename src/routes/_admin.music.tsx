@@ -5,10 +5,17 @@ import { PageHeader } from "@/components/PageHeader";
 import { Modal } from "@/components/Modal";
 import { Plus, Music2, Edit2, Trash2, Disc3, Search, Save, FolderOpen, Loader2 } from "lucide-react";
 import { melodiseDb } from "@/lib/external-supabase";
+import { getCurrentUser, hasPermission, canEditMusic } from "@/lib/auth";
+import { NoPermission } from "@/components/NoPermission";
 
 export const Route = createFileRoute("/_admin/music")({
-  component: MusicPage,
+  component: MusicGuard,
 });
+
+function MusicGuard() {
+  if (!hasPermission(getCurrentUser(), "music")) return <NoPermission tab="Quản lý nhạc số" />;
+  return <MusicPage />;
+}
 
 type TrackStatus = "Đang bán" | "Bản nháp" | "Ngừng bán";
 type Track = {
@@ -199,12 +206,14 @@ function TracksTab({
             className="w-full rounded-lg border border-border bg-input/40 py-2 pl-10 pr-3 text-sm placeholder:text-muted-foreground focus:border-gold focus:outline-none"
           />
         </div>
-        <button
-          onClick={() => setCreating(true)}
-          className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-gold to-amber-300 px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:scale-[1.02]"
-        >
-          <Plus className="h-4 w-4" /> Thêm mới
-        </button>
+        {canEditMusic(getCurrentUser()) && (
+          <button
+            onClick={() => setCreating(true)}
+            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-gold to-amber-300 px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:scale-[1.02]"
+          >
+            <Plus className="h-4 w-4" /> Thêm mới
+          </button>
+        )}
       </div>
 
       {filtered.length === 0 ? (
@@ -248,22 +257,24 @@ function TracksTab({
                     {t.status}
                   </div>
                 </div>
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => setEditing(t)}
-                    className="rounded-md p-2 text-muted-foreground transition hover:bg-gold/15 hover:text-gold"
-                    title="Sửa"
-                  >
-                    <Edit2 className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setDeleting(t)}
-                    className="rounded-md p-2 text-muted-foreground transition hover:bg-destructive/20 hover:text-destructive-foreground"
-                    title="Xóa"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
+                {canEditMusic(getCurrentUser()) && (
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => setEditing(t)}
+                      className="rounded-md p-2 text-muted-foreground transition hover:bg-gold/15 hover:text-gold"
+                      title="Sửa"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => setDeleting(t)}
+                      className="rounded-md p-2 text-muted-foreground transition hover:bg-destructive/20 hover:text-destructive-foreground"
+                      title="Xóa"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -557,12 +568,14 @@ function CategoriesTab({
             className="w-full rounded-lg border border-border bg-input/40 py-2 pl-10 pr-3 text-sm placeholder:text-muted-foreground focus:border-gold focus:outline-none"
           />
         </div>
-        <button
-          onClick={() => setCreating(true)}
-          className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-gold to-amber-300 px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:scale-[1.02]"
-        >
-          <Plus className="h-4 w-4" /> Thêm mới
-        </button>
+        {canEditMusic(getCurrentUser()) && (
+          <button
+            onClick={() => setCreating(true)}
+            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-gold to-amber-300 px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:scale-[1.02]"
+          >
+            <Plus className="h-4 w-4" /> Thêm mới
+          </button>
+        )}
       </div>
 
       <div className="glass-card overflow-hidden rounded-2xl">
@@ -591,20 +604,22 @@ function CategoriesTab({
                   <td className="px-4 py-3 text-muted-foreground">{c.description}</td>
                   <td className="px-4 py-3">{tracks.filter((t) => t.category === c.name).length}</td>
                   <td className="px-4 py-3">
-                    <div className="flex justify-end gap-1">
-                      <button
-                        onClick={() => setEditing(c)}
-                        className="rounded-md p-1.5 text-muted-foreground hover:bg-gold/15 hover:text-gold"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => setDeleting(c)}
-                        className="rounded-md p-1.5 text-muted-foreground hover:bg-destructive/20 hover:text-destructive-foreground"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
+                    {canEditMusic(getCurrentUser()) && (
+                      <div className="flex justify-end gap-1">
+                        <button
+                          onClick={() => setEditing(c)}
+                          className="rounded-md p-1.5 text-muted-foreground hover:bg-gold/15 hover:text-gold"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setDeleting(c)}
+                          className="rounded-md p-1.5 text-muted-foreground hover:bg-destructive/20 hover:text-destructive-foreground"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))
