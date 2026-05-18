@@ -568,12 +568,14 @@ function CategoriesTab({
             className="w-full rounded-lg border border-border bg-input/40 py-2 pl-10 pr-3 text-sm placeholder:text-muted-foreground focus:border-gold focus:outline-none"
           />
         </div>
-        <button
-          onClick={() => setCreating(true)}
-          className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-gold to-amber-300 px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:scale-[1.02]"
-        >
-          <Plus className="h-4 w-4" /> Thêm mới
-        </button>
+        {canEditMusic(getCurrentUser()) && (
+          <button
+            onClick={() => setCreating(true)}
+            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-gold to-amber-300 px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:scale-[1.02]"
+          >
+            <Plus className="h-4 w-4" /> Thêm mới
+          </button>
+        )}
       </div>
 
       <div className="glass-card overflow-hidden rounded-2xl">
@@ -602,20 +604,22 @@ function CategoriesTab({
                   <td className="px-4 py-3 text-muted-foreground">{c.description}</td>
                   <td className="px-4 py-3">{tracks.filter((t) => t.category === c.name).length}</td>
                   <td className="px-4 py-3">
-                    <div className="flex justify-end gap-1">
-                      <button
-                        onClick={() => setEditing(c)}
-                        className="rounded-md p-1.5 text-muted-foreground hover:bg-gold/15 hover:text-gold"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => setDeleting(c)}
-                        className="rounded-md p-1.5 text-muted-foreground hover:bg-destructive/20 hover:text-destructive-foreground"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
+                    {canEditMusic(getCurrentUser()) && (
+                      <div className="flex justify-end gap-1">
+                        <button
+                          onClick={() => setEditing(c)}
+                          className="rounded-md p-1.5 text-muted-foreground hover:bg-gold/15 hover:text-gold"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setDeleting(c)}
+                          className="rounded-md p-1.5 text-muted-foreground hover:bg-destructive/20 hover:text-destructive-foreground"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))
