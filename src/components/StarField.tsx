@@ -39,7 +39,11 @@ function NoteIcon({ size }: { size: number }) {
 }
 
 export function StarField({ density = 40 }: { density?: number }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const stars = useMemo<Star[]>(() => {
+    if (!mounted) return [];
     return Array.from({ length: density }).map(() => ({
       top: `${Math.random() * 100}%`,
       left: `${Math.random() * 100}%`,
@@ -47,16 +51,17 @@ export function StarField({ density = 40 }: { density?: number }) {
       delay: `${Math.random() * 3}s`,
       duration: `${2 + Math.random() * 3}s`,
     }));
-  }, [density]);
+  }, [density, mounted]);
 
   const notes = useMemo(() => {
+    if (!mounted) return [];
     return Array.from({ length: 8 }).map(() => ({
       left: `${Math.random() * 100}%`,
       size: 14 + Math.random() * 14,
       delay: `${Math.random() * 12}s`,
       duration: `${10 + Math.random() * 8}s`,
     }));
-  }, []);
+  }, [mounted]);
 
   return (
     <div
