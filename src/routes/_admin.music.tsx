@@ -66,7 +66,7 @@ function MusicPage() {
       });
       setCategories(
         (cRes.data ?? []).map((c: { category_id: number; category: string; description: string | null }) => ({
-          id: `C${String(c.category_id).padStart(2, "0")}`,
+          id: String(c.category_id),
           name: c.category,
           description: c.description ?? "",
         })),
@@ -77,7 +77,7 @@ function MusicPage() {
           demo_audio_url: string | null; original_audio_url: string | null;
           cover_image_url: string | null; artist_id: number | null;
         }) => ({
-          id: `T${String(t.track_id).padStart(3, "0")}`,
+          id: String(t.track_id),
           title: t.title,
           artist: t.artist_id ? artistMap.get(t.artist_id) ?? "—" : "—",
           category: trackCatMap.get(t.track_id) ?? "",
