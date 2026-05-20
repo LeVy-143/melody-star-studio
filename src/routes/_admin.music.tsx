@@ -604,6 +604,7 @@ function CategoriesTab({
       {(editing || creating) && (
         <CategoryForm
           initial={editing}
+          existingIds={categories.map((c) => c.id)}
           onCancel={() => {
             setEditing(null);
             setCreating(false);
