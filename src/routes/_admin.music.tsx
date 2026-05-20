@@ -17,7 +17,6 @@ function MusicGuard() {
   return <MusicPage />;
 }
 
-type TrackStatus = "Đang bán" | "Bản nháp" | "Ngừng bán";
 type Track = {
   id: string;
   title: string;
@@ -28,7 +27,6 @@ type Track = {
   preview: string; // .mp3 only
   original: string; // .mp3 / .wav
   cover?: string;
-  status: TrackStatus;
 };
 type Category = { id: string; name: string; description: string };
 
@@ -88,7 +86,6 @@ function MusicPage() {
           preview: t.demo_audio_url?.split("/").pop() ?? "",
           original: t.original_audio_url?.split("/").pop() ?? "",
           cover: t.cover_image_url ?? undefined,
-          status: "Đang bán" as TrackStatus,
         })),
       );
       setLoading(false);
@@ -243,20 +240,7 @@ function TracksTab({
               </div>
 
               <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
-                <div>
-                  <div className="text-lg font-bold text-gold">{fmt(t.price)}</div>
-                  <div
-                    className={`mt-0.5 text-[10px] uppercase tracking-wider ${
-                      t.status === "Đang bán"
-                        ? "text-emerald-300"
-                        : t.status === "Bản nháp"
-                          ? "text-amber-300"
-                          : "text-destructive-foreground"
-                    }`}
-                  >
-                    {t.status}
-                  </div>
-                </div>
+                <div className="text-lg font-bold text-gold">{fmt(t.price)}</div>
                 {canEditMusic(getCurrentUser()) && (
                   <div className="flex gap-1">
                     <button
@@ -332,7 +316,6 @@ function TrackForm({
       price: 0,
       preview: "",
       original: "",
-      status: "Bản nháp",
     },
   );
   const [error, setError] = useState("");
@@ -426,27 +409,14 @@ function TrackForm({
             </select>
           </Field>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Giá bán (VNĐ)">
-            <input
-              type="number"
-              value={form.price || ""}
-              onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-              className="input"
-            />
-          </Field>
-          <Field label="Trạng thái">
-            <select
-              value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value as TrackStatus })}
-              className="input"
-            >
-              <option>Bản nháp</option>
-              <option>Đang bán</option>
-              <option>Ngừng bán</option>
-            </select>
-          </Field>
-        </div>
+        <Field label="Giá bán (VNĐ)">
+          <input
+            type="number"
+            value={form.price || ""}
+            onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+            className="input"
+          />
+        </Field>
         <Field label="Bản nghe thử (.mp3, có Watermark)">
           <input
             value={form.preview}
