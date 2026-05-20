@@ -35,9 +35,9 @@ export const ROLE_LABEL: Record<Role, string> = {
 // Ma trận quyền: tab → vai trò được vào
 // Lưu ý: với sales, "music" là tra cứu (read-only) — guard riêng bằng canEditMusic
 export const PERMISSIONS: Record<Role, string[]> = {
-  admin: ["dashboard", "accounts", "music", "orders", "reports"],
-  producer: ["dashboard", "music"],
-  sales: ["dashboard", "music", "reports"],
+  admin: ["accounts", "music", "orders", "reports"],
+  producer: ["music"],
+  sales: ["music", "reports"],
 };
 
 export function hasPermission(user: AuthUser | null, tab: string): boolean {
