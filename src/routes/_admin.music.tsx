@@ -627,15 +627,20 @@ function CategoriesTab({
 
 function CategoryForm({
   initial,
+  existingIds,
   onCancel,
   onSubmit,
 }: {
   initial: Category | null;
+  existingIds: string[];
   onCancel: () => void;
   onSubmit: (c: Category) => void;
 }) {
+  const nextId = String(
+    (existingIds.reduce((m, x) => Math.max(m, Number(x) || 0), 0) || 0) + 1,
+  );
   const [form, setForm] = useState<Category>(
-    initial ?? { id: "", name: "", description: "" },
+    initial ?? { id: nextId, name: "", description: "" },
   );
   return (
     <Modal title={initial ? "Sửa danh mục" : "Thêm danh mục"} onClose={onCancel}>
