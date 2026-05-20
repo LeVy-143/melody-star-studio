@@ -66,7 +66,7 @@ function MusicPage() {
       });
       setCategories(
         (cRes.data ?? []).map((c: { category_id: number; category: string; description: string | null }) => ({
-          id: `C${String(c.category_id).padStart(2, "0")}`,
+          id: String(c.category_id),
           name: c.category,
           description: c.description ?? "",
         })),
@@ -77,7 +77,7 @@ function MusicPage() {
           demo_audio_url: string | null; original_audio_url: string | null;
           cover_image_url: string | null; artist_id: number | null;
         }) => ({
-          id: `T${String(t.track_id).padStart(3, "0")}`,
+          id: String(t.track_id),
           title: t.title,
           artist: t.artist_id ? artistMap.get(t.artist_id) ?? "—" : "—",
           category: trackCatMap.get(t.track_id) ?? "",
@@ -306,9 +306,12 @@ function TrackForm({
   onCancel: () => void;
   onSubmit: (t: Track) => void;
 }) {
+  const nextId = String(
+    (existingIds.reduce((m, x) => Math.max(m, Number(x) || 0), 0) || 0) + 1,
+  );
   const [form, setForm] = useState<Track>(
     initial ?? {
-      id: "T" + String(Math.floor(Math.random() * 900) + 100),
+      id: nextId,
       title: "",
       artist: "",
       category: categories[0]?.name ?? "",
@@ -601,6 +604,7 @@ function CategoriesTab({
       {(editing || creating) && (
         <CategoryForm
           initial={editing}
+          existingIds={categories.map((c) => c.id)}
           onCancel={() => {
             setEditing(null);
             setCreating(false);
@@ -623,15 +627,20 @@ function CategoriesTab({
 
 function CategoryForm({
   initial,
+  existingIds,
   onCancel,
   onSubmit,
 }: {
   initial: Category | null;
+  existingIds: string[];
   onCancel: () => void;
   onSubmit: (c: Category) => void;
 }) {
+  const nextId = String(
+    (existingIds.reduce((m, x) => Math.max(m, Number(x) || 0), 0) || 0) + 1,
+  );
   const [form, setForm] = useState<Category>(
-    initial ?? { id: "C" + String(Math.floor(Math.random() * 90) + 10), name: "", description: "" },
+    initial ?? { id: nextId, name: "", description: "" },
   );
   return (
     <Modal title={initial ? "Sửa danh mục" : "Thêm danh mục"} onClose={onCancel}>
