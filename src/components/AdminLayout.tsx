@@ -1,7 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { signOut, getCurrentUser, hasPermission, ROLE_LABEL } from "@/lib/auth";
 import {
-  LayoutDashboard,
   Users,
   Music2,
   ShoppingBag,
@@ -12,7 +11,6 @@ import {
 import { StarField } from "./StarField";
 
 const nav = [
-  { to: "/", label: "Tổng quan", icon: LayoutDashboard, tab: "dashboard" },
   { to: "/accounts", label: "Tài khoản", icon: Users, tab: "accounts" },
   { to: "/music", label: "Nhạc số", icon: Music2, tab: "music" },
   { to: "/orders", label: "Đơn hàng", icon: ShoppingBag, tab: "orders" },
@@ -58,7 +56,7 @@ export function AdminLayout() {
 
           <nav className="flex flex-1 flex-col gap-1 px-3">
             {visibleNav.map(({ to, label, icon: Icon }) => {
-              const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
+              const active = pathname.startsWith(to);
               return (
                 <Link
                   key={to}
