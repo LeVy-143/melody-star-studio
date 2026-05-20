@@ -56,7 +56,7 @@ export function AdminLayout() {
 
           <nav className="flex flex-1 flex-col gap-1 px-3">
             {visibleNav.map(({ to, label, icon: Icon }) => {
-              const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
+              const active = pathname.startsWith(to);
               return (
                 <Link
                   key={to}
