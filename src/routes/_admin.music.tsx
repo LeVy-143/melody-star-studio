@@ -306,9 +306,12 @@ function TrackForm({
   onCancel: () => void;
   onSubmit: (t: Track) => void;
 }) {
+  const nextId = String(
+    (existingIds.reduce((m, x) => Math.max(m, Number(x) || 0), 0) || 0) + 1,
+  );
   const [form, setForm] = useState<Track>(
     initial ?? {
-      id: "T" + String(Math.floor(Math.random() * 900) + 100),
+      id: nextId,
       title: "",
       artist: "",
       category: categories[0]?.name ?? "",
