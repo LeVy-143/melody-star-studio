@@ -634,7 +634,7 @@ function CategoryForm({
   onSubmit: (c: Category) => void;
 }) {
   const [form, setForm] = useState<Category>(
-    initial ?? { id: "C" + String(Math.floor(Math.random() * 90) + 10), name: "", description: "" },
+    initial ?? { id: "", name: "", description: "" },
   );
   return (
     <Modal title={initial ? "Sửa danh mục" : "Thêm danh mục"} onClose={onCancel}>
